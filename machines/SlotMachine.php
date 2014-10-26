@@ -1,11 +1,17 @@
 <?php
 
+require_once(dirname(__FILE__).'/../env/Utility.php');
+
 Class SlotMachine{
 	// 設定
 	protected $rank;
 	
-	// 回転数
+	// 総回転数
 	protected $count	= 0;
+	// 現回転数
+	protected $countNow	= 0;
+	// 現回転数リセットフラグ
+	protected $countReset	= false;
 	// BB回数
 	protected $big		= 0;
 	// RB回数
@@ -17,18 +23,32 @@ Class SlotMachine{
 	// 役
 	protected $yaku;
 	
-	public function __construct($rank){
-		$this->SetRank($rank);
+	public function __construct($iRank){
+		$this->SetRank($iRank);
+	}
+	
+	// 事前に回す
+	public function PreGame($iGameCount){
+		for($i = 0; $i < $iGameCount; $i++){
+			$this->Game();
+		}
 	}
 	
 	// 回す
 	public function Game(){
+		// 現回転数リセットフラグ
+		if($this->countReset){
+			$this->countNow = 0;
+			$this->countReset = false;
+		}
+		
 		// 回転
 		$this->count++;
+		$this->countNow++;
 		$this->samai -= 3;
 		
 		// 乱数生成
-		$rand	= $this->Rand();
+		$rand	= MyRand();
 		
 		// 役判定
 		$pCount = 0;
@@ -40,10 +60,12 @@ Class SlotMachine{
 				// ビッグ
 				if($yaku['isBig']){
 					$this->big++;
+					$this->countReset	= true;
 				}
 				// レグ
 				if($yaku['isReg']){
 					$this->reg++;
+					$this->countReset	= true;
 				}
 				// 差枚
 				$this->samai += $yaku['pay'];
@@ -57,36 +79,52 @@ Class SlotMachine{
 	}
 
 	// 設定変更
-	protected function SetRank($rank){
+	protected function SetRank($iRank){
 		$yaku	= $this->GetYaku();
 		
-		$this->yaku	= isset($yaku[$rank]) ? $yaku[$rank] : array();
+		$this->yaku	= isset($yaku[$iRank]) ? $yaku[$iRank] : array();
+		$this->rank	= $iRank;
 	}
 	
 	// 役
-	protected function GetYaku(){
+	public function GetYaku(){
+	}
+	
+	// 自分の機種名
+	public function GetMyName(){
 	}
 	
 	// 合成確率
-	protected function GetBonusP(){
+	public function GetBonusP(){
 		return $this->count == 0 ? 0 : ($this->big + $this->reg) / $this->count;
 	}
+	// BIG回数
+	public function GetBigCount(){
+		return $this->big;
+	}
+	// REG回数
+	public function GetRegCount(){
+		return $this->reg;
+	}
 	// BIG確率
-	protected function GetBigP(){
+	public function GetBigP(){
 		return $this->count == 0 ? 0 : $this->big / $this->count;
 	}
 	// REG確率
-	protected function GetRegP(){
+	public function GetRegP(){
 		return $this->count == 0 ? 0 : $this->reg / $this->count;
 	}
-		
-	// 乱数取得
-	protected function Rand(){
-		return mt_rand() / (mt_getrandmax()+1);
+	// 総回転数
+	public function GetGameTotal(){
+		return $this->count;
 	}
-	
-	public function PubGetYaku(){
-		return $this->GetYaku();
+	// 現回転数
+	public function GetGameNow(){
+		return $this->countNow;
+	}
+	// 設定
+	public function GetRank(){
+		return $this->rank;
 	}
 }
 

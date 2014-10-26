@@ -1,0 +1,51 @@
+.dataBack{
+background-color:#000000;
+}
+.bb{
+width:80px;
+color:#ff0000;
+}
+.rb{
+width:80px;
+color:#f08300;
+}
+.st{
+width:120px;
+color:#b8d200;
+}
+.to{
+width:120px;
+color:#00ffff;
+}
+.go{
+width:120px;
+color:#ffd900;
+}
+.go{
+width:120px;
+color:#ffd900;
+}
+.rank{
+width:80px;
+color:#ffffff;
+}
+
+
+.titlebar th{
+font-size:20px;
+text-align:center;
+}
+.counter td{
+font-size:30px;
+text-align:right;
+}
+
+.data{
+	width:20px;
+	height:5px;
+	font-size:3px;
+}
+.dataCount{
+	font-size:10px;
+	text-align:center;
+}
